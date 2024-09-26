@@ -1,9 +1,35 @@
 // src/components/specific/SupplierRegistration.js
 
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Col, Row, Alert, Card, Container, Spinner } from 'react-bootstrap';
+import {
+    Form,
+    Button,
+    Col,
+    Row,
+    Alert,
+    Card,
+    Container,
+    Spinner,
+    InputGroup,
+    FormControl,
+    ListGroup,
+    Modal,
+} from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileAlt, faClipboardList, faEnvelope, faPhone, faCheckCircle, faFileUpload, faMapPin, faSignIn } from '@fortawesome/free-solid-svg-icons';
+import {
+    faFileAlt,
+    faClipboardList,
+    faEnvelope,
+    faPhone,
+    faCheckCircle,
+    faFileUpload,
+    faMapPin,
+    faSignIn,
+    faEye,
+    faEyeSlash,
+    faTimesCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import ArrayInput from '../common/ArrayInput';
 import FileUploadComponent from '../common/FileUploadComponent';
 import SelectableModal from '../common/SelectableModal.js';
@@ -12,10 +38,9 @@ import { fetchCategories, createSupplierAccount } from '../../services/api.js';
 import '../../assets/styles/SupplierRegistration.css';
 
 const SupplierRegistration = () => {
-    const [errorMessage, setErrorMessage] = useState(null)
-    const [showEmailModal, setShowEmailModal] = useState(false);
-    const [selectedEmail, setSelectedEmail] = useState('');
-    const [creatingAccount, setCreatingAccount] = useState(false)
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [creatingAccount, setCreatingAccount] = useState(false);
     const [categories, setCategories] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState([]);
@@ -35,10 +60,22 @@ const SupplierRegistration = () => {
         contactPersonRole: '',
         documents: null,
         password: '',
+        confirmPassword: '',
+        accountEmail: '',
     });
     const [submissionStatus, setSubmissionStatus] = useState(null);
-
-    const maxCharacters = 1000; // Maximum character limit for 'About' field
+    const [passwordValidity, setPasswordValidity] = useState({
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        specialChar: false,
+        passwordsMatch: false,
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const maxCharacters = 1000;
 
     useEffect(() => {
         const fetchCat = async () => {
@@ -49,15 +86,40 @@ const SupplierRegistration = () => {
         };
 
         fetchCat();
-
     }, []);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
         if (id === 'about' && value.length > maxCharacters) {
-            return; // Prevent further input if the maximum character limit is exceeded
+            return;
         }
-        setFormData({ ...formData, [e.target.id]: e.target.value });
+        setFormData({ ...formData, [id]: value });
+
+        if (id === 'password' || id === 'confirmPassword') {
+            validatePassword({
+                ...formData,
+                [id]: value,
+            });
+        }
+    };
+
+    const validatePassword = (data) => {
+        const { password, confirmPassword } = data;
+        const length = password.length >= 8;
+        const uppercase = /[A-Z]/.test(password);
+        const lowercase = /[a-z]/.test(password);
+        const number = /\d/.test(password);
+        const specialChar = /[\W_]/.test(password);
+        const passwordsMatch = password === confirmPassword && password !== '';
+
+        setPasswordValidity({
+            length,
+            uppercase,
+            lowercase,
+            number,
+            specialChar,
+            passwordsMatch,
+        });
     };
 
     const handleCategorySelection = (selection) => {
@@ -73,43 +135,56 @@ const SupplierRegistration = () => {
         setFormData({ ...formData, documents: file });
     };
 
-    // Selection Modal dialog handling
     const handleModalClose = () => setShowModal(false);
     const handleModalShow = () => setShowModal(true);
 
-    // Submission function
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         setErrorMessage(null);
 
-        // Check if both emails are provided
         if (formData.email === formData.contactPersonEmail) {
-            setErrorMessage('The contact person email should be different from the company email');
-            return
+            setErrorMessage('The contact person email should be different from the company email.');
+            return;
         }
         if (formData.email && formData.contactPersonEmail) {
             setShowEmailModal(true);
-            return; // Stop further submission until the modal selection is made
+            return;
         }
 
-        // Proceed with submission if only one email exists or both are the same
+        // If only one email is provided, set accountEmail
+        formData.accountEmail = formData.email || formData.contactPersonEmail;
+
         await submitForm(formData);
     };
 
     const submitForm = async (formData) => {
+        setCreatingAccount(true);
 
-
-        setCreatingAccount(true)
+        if (
+            !passwordValidity.length ||
+            !passwordValidity.uppercase ||
+            !passwordValidity.lowercase ||
+            !passwordValidity.number ||
+            !passwordValidity.specialChar ||
+            !passwordValidity.passwordsMatch
+        ) {
+            setErrorMessage('Please ensure your password meets all the requirements.');
+            setCreatingAccount(false);
+            return;
+        }
 
         const data = new FormData();
 
-        // Add selected email as accountEmail if available
-        if (selectedEmail) {
-            data.append('accountEmail', selectedEmail);
+        // Use 'accountEmail' from formData
+        if (formData.accountEmail) {
+            data.append('accountEmail', formData.accountEmail);
+        } else {
+            setErrorMessage('No account email provided.');
+            setCreatingAccount(false);
+            return;
         }
 
-        // Append text fields to FormData
         data.append('name', formData.name);
         data.append('about', formData.about);
         data.append('phone', formData.phone);
@@ -123,28 +198,25 @@ const SupplierRegistration = () => {
         data.append('contactPersonRole', formData.contactPersonRole);
         data.append('password', formData.password);
 
-        // Append arrays as JSON strings
-        data.append('category', JSON.stringify(formData.category));
-        data.append('productsServices', JSON.stringify(formData.productsServices));
+        // Append arrays properly
+        formData.category.forEach((item) => data.append('category[]', item));
+        formData.productsServices.forEach((item) =>
+            data.append('productsServices[]', item)
+        );
 
-        // Append the file
         if (formData.documents) {
             data.append('documents', formData.documents);
         }
 
-        // Debugging: Log FormData contents
-        console.log('Logging FormData Contents:');
-        for (let pair of data.entries()) {
-            console.log(`${pair[0]}:`, pair[1]);
-        }
-
         try {
-            console.log(formData);
-            const response = await createSupplierAccount(formData);
+            const response = await createSupplierAccount(data);
 
             if (response.status === 201) {
-                setSubmissionStatus({ type: 'success', message: 'Supplier Account successfully created!' });
-                // Reset the form state
+                setSubmissionStatus({
+                    type: 'success',
+                    message: 'Supplier Account successfully created!',
+                });
+                setShowSuccessModal(true);
                 setSelectedCategories([]);
                 setFormData({
                     name: '',
@@ -162,33 +234,43 @@ const SupplierRegistration = () => {
                     contactPersonRole: '',
                     documents: null,
                     password: '',
+                    confirmPassword: '',
+                    accountEmail: '',
+                });
+                setPasswordValidity({
+                    length: false,
+                    uppercase: false,
+                    lowercase: false,
+                    number: false,
+                    specialChar: false,
+                    passwordsMatch: false,
                 });
             } else {
                 setSubmissionStatus({ type: 'error', message: response.data.message });
             }
-            setCreatingAccount(false)
+            setCreatingAccount(false);
         } catch (error) {
             console.log('Client side error: ', error);
-            setCreatingAccount(false)
+            setCreatingAccount(false);
             setSubmissionStatus({ type: 'error', message: `${error}` });
         }
     };
 
     const handleEmailSelection = (email) => {
-        setSelectedEmail(email);
         setShowEmailModal(false);
         submitForm({ ...formData, accountEmail: email });
     };
 
     return (
         <Container className="supplier-form-container">
-            <Card className="p-4" border='success'>
+            <Card className="p-4" border="success">
                 <Card.Header>
-                    <h3 className="text-center mb-4">Create Supplier Account</h3>
+                    <h3 className="text-center mb-4">
+                        <FontAwesomeIcon icon={faClipboardList} /> Create Supplier Account
+                    </h3>
                 </Card.Header>
                 <Form onSubmit={handleSubmit}>
                     <Card.Body>
-
                         <Row>
                             <Col md={12}>
                                 <Form.Group controlId="name">
@@ -212,7 +294,10 @@ const SupplierRegistration = () => {
                         <Row>
                             <Col md={12}>
                                 <Form.Group controlId="category">
-                                    <Form.Label>Select Company/Organization Category (Max 4)</Form.Label>
+                                    <Form.Label>
+                                        <FontAwesomeIcon icon={faClipboardList} /> Select Company/Organization
+                                        Category (Max 4)
+                                    </Form.Label>
                                     <Button variant="outline-primary" onClick={handleModalShow}>
                                         Select Categories
                                     </Button>
@@ -240,7 +325,9 @@ const SupplierRegistration = () => {
                         <br />
 
                         <Form.Group controlId="about">
-                            <Form.Label>About Company/Organization</Form.Label>
+                            <Form.Label>
+                                <FontAwesomeIcon icon={faFileAlt} /> About Company/Organization
+                            </Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={4}
@@ -250,8 +337,9 @@ const SupplierRegistration = () => {
                                 className="custom-textarea"
                                 required
                             />
-
-                            <b>{formData.about.length}/1000 characters</b>
+                            <small>
+                                <b>{formData.about.length}/{maxCharacters} characters</b>
+                            </small>
                         </Form.Group>
 
                         <br />
@@ -305,10 +393,12 @@ const SupplierRegistration = () => {
                         <br />
 
                         <Form.Group controlId="country">
-                            <Form.Label>Country</Form.Label>
+                            <Form.Label>
+                                <FontAwesomeIcon icon={faMapPin} /> Country
+                            </Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder=""
+                                placeholder="Country"
                                 value={formData.country}
                                 onChange={handleChange}
                                 className="custom-input"
@@ -319,10 +409,12 @@ const SupplierRegistration = () => {
                         <br />
 
                         <Form.Group controlId="city">
-                            <Form.Label>City</Form.Label>
+                            <Form.Label>
+                                <FontAwesomeIcon icon={faMapPin} /> City
+                            </Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder=""
+                                placeholder="City"
                                 value={formData.city}
                                 onChange={handleChange}
                                 className="custom-input"
@@ -333,10 +425,12 @@ const SupplierRegistration = () => {
                         <br />
 
                         <Form.Group controlId="contactPerson">
-                            <Form.Label>Contact Person - Fullname</Form.Label>
+                            <Form.Label>
+                                <FontAwesomeIcon icon={faFileAlt} /> Contact Person - Full Name
+                            </Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder=""
+                                placeholder="Full Name"
                                 value={formData.contactPerson}
                                 onChange={handleChange}
                                 className="custom-input"
@@ -347,7 +441,9 @@ const SupplierRegistration = () => {
                         <br />
 
                         <Form.Group controlId="contactPersonRole">
-                            <Form.Label>Contact Person - Role</Form.Label>
+                            <Form.Label>
+                                <FontAwesomeIcon icon={faFileAlt} /> Contact Person - Role
+                            </Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="HR Manager, Procurement Officer, CEO, etc."
@@ -366,7 +462,7 @@ const SupplierRegistration = () => {
                             </Form.Label>
                             <Form.Control
                                 type="email"
-                                placeholder=""
+                                placeholder="Email Address"
                                 value={formData.contactPersonEmail}
                                 onChange={handleChange}
                                 className="custom-input"
@@ -382,7 +478,7 @@ const SupplierRegistration = () => {
                             </Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder=""
+                                placeholder="Phone Number"
                                 value={formData.contactPersonPhone}
                                 onChange={handleChange}
                                 className="custom-input"
@@ -392,68 +488,150 @@ const SupplierRegistration = () => {
 
                         <br />
 
+                        {/* Password and Confirm Password Fields */}
                         <Form.Group controlId="password">
                             <Form.Label>
-                                <FontAwesomeIcon icon={faSignIn} />
-                                Account Password
+                                <FontAwesomeIcon icon={faSignIn} /> Account Password
                             </Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Provide a Strong Password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="custom-input"
-                                required
-                            />
+                            <InputGroup>
+                                <FormControl
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="Provide a strong password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="custom-input"
+                                    required
+                                />
+                                <Button
+                                    variant="outline-secondary"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                </Button>
+                            </InputGroup>
                         </Form.Group>
 
                         <br />
 
+                        <Form.Group controlId="confirmPassword">
+                            <Form.Label>
+                                <FontAwesomeIcon icon={faSignIn} /> Confirm Password
+                            </Form.Label>
+                            <InputGroup>
+                                <FormControl
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="Confirm your password"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    className="custom-input"
+                                    required
+                                />
+                                <Button
+                                    variant="outline-secondary"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                </Button>
+                            </InputGroup>
+                        </Form.Group>
+
+                        {/* Password Requirements */}
+                        <ListGroup className="mb-3 mt-3">
+                            <ListGroup.Item>
+                                <FontAwesomeIcon
+                                    icon={passwordValidity.length ? faCheckCircle : faTimesCircle}
+                                    className={passwordValidity.length ? 'text-success' : 'text-danger'}
+                                />{' '}
+                                At least 8 characters
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <FontAwesomeIcon
+                                    icon={passwordValidity.uppercase ? faCheckCircle : faTimesCircle}
+                                    className={passwordValidity.uppercase ? 'text-success' : 'text-danger'}
+                                />{' '}
+                                Contains an uppercase letter
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <FontAwesomeIcon
+                                    icon={passwordValidity.lowercase ? faCheckCircle : faTimesCircle}
+                                    className={passwordValidity.lowercase ? 'text-success' : 'text-danger'}
+                                />{' '}
+                                Contains a lowercase letter
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <FontAwesomeIcon
+                                    icon={passwordValidity.number ? faCheckCircle : faTimesCircle}
+                                    className={passwordValidity.number ? 'text-success' : 'text-danger'}
+                                />{' '}
+                                Contains a number
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <FontAwesomeIcon
+                                    icon={passwordValidity.specialChar ? faCheckCircle : faTimesCircle}
+                                    className={passwordValidity.specialChar ? 'text-success' : 'text-danger'}
+                                />{' '}
+                                Contains a special character
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <FontAwesomeIcon
+                                    icon={passwordValidity.passwordsMatch ? faCheckCircle : faTimesCircle}
+                                    className={
+                                        passwordValidity.passwordsMatch ? 'text-success' : 'text-danger'
+                                    }
+                                />{' '}
+                                Passwords match
+                            </ListGroup.Item>
+                        </ListGroup>
+
                         {/* File Upload Field */}
-                        <Form.Group controlId="documents" mt={2}>
-                            <FontAwesomeIcon icon={faFileUpload} />
+                        <Form.Group controlId="documents" className="mt-3">
+                            <Form.Label>
+                                <FontAwesomeIcon icon={faFileUpload} /> Optional - Upload Files (e.g., Certificate
+                                of Incorporation)
+                            </Form.Label>
                             <FileUploadComponent
                                 fileType={['pdf', 'doc', 'docx']}
                                 maxSize={5}
                                 onFileUpload={handleFileUpload}
-                                label={'OPTIONAL - Upload Files e.g Certificate of incorporation (Should be one single file PDF File)'}
+                                label="Upload a single PDF or DOC file"
                                 multiple={false}
-                                placeholder={"'pdf'"}
+                                placeholder="'pdf', 'doc', 'docx'"
                             />
                         </Form.Group>
 
                         <br />
 
+                        {/* Submit Button and Messages */}
                         <div className="text-center">
-                            {creatingAccount ? <>
-                                <Spinner animation="border" variant="primary" />
-                                <Spinner animation="border" variant="secondary" />
-                                <Spinner animation="border" variant="success" />
-                            </> :
+                            {creatingAccount ? (
+                                <>
+                                    <Spinner animation="border" variant="primary" />
+                                    <Spinner animation="border" variant="secondary" />
+                                    <Spinner animation="border" variant="success" />
+                                </>
+                            ) : (
                                 <Button variant="success" type="submit" className="submit-button">
                                     <FontAwesomeIcon icon={faCheckCircle} /> Create Account
-                                </Button>}
+                                </Button>
+                            )}
                         </div>
 
-                        {
-                            errorMessage !== null
-                            &&
-                            <Alert variant='danger'>
-                                {errorMessage}
-                            </Alert>
-                        }
-
-                        {submissionStatus && (
-                            <Alert variant={submissionStatus.type === 'success' ? 'success' : 'danger'}>
-                                {submissionStatus.message}
+                        {errorMessage && (
+                            <Alert variant="danger" className="mt-3">
+                                <FontAwesomeIcon icon={faTimesCircle} /> {errorMessage}
                             </Alert>
                         )}
 
+                        {submissionStatus && submissionStatus.type === 'error' && (
+                            <Alert variant="danger" className="mt-3">
+                                {submissionStatus.message}
+                            </Alert>
+                        )}
                     </Card.Body>
                 </Form>
             </Card>
 
-            {/* Use the SelectableModal Component */}
+            {/* Category Selection Modal */}
             <SelectableModal
                 show={showModal}
                 handleClose={handleModalClose}
@@ -464,7 +642,7 @@ const SupplierRegistration = () => {
                 onSelectionChange={handleCategorySelection}
             />
 
-            {/* Select Email To Use For Account Login */}
+            {/* Email Selection Modal */}
             <EmailSelectionModal
                 show={showEmailModal}
                 handleClose={() => setShowEmailModal(false)}
@@ -472,6 +650,21 @@ const SupplierRegistration = () => {
                 emails={[formData.email, formData.contactPersonEmail]}
             />
 
+            {/* Success Modal */}
+            <Modal show={showSuccessModal} onHide={() => { }} backdrop="static" keyboard={false}>
+                <Modal.Header>
+                    <Modal.Title>Account Created Successfully!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Your supplier account has been created successfully.</p>
+                    <p>You can now sign in using your account email and password.</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => navigate('/sign-in')}>
+                        Go to Sign In
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 };
