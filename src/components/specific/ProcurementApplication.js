@@ -1,11 +1,13 @@
 // src/components/specific/ProcurementApplication.js
 import React, { useState } from 'react';
-import { Container, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { Container, Card, Form, Button, Alert, Spinner, Modal } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import FileUploadComponent from '../common/FileUploadComponent';
 import { serverURL } from '../../configs/urls.js';
 import '../../assets/styles/ProcurementApplication.css'; // Custom CSS file for additional styling
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faExclamationTriangle, faSpinner, faPaperPlane, faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const ProcurementApplication = () => {
     // Retrieve user info from localStorage
@@ -25,8 +27,10 @@ const ProcurementApplication = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [service, setService] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setError(null)
 
@@ -39,6 +43,15 @@ const ProcurementApplication = () => {
             setError('All documents are required.');
             return;
         }
+
+        // Show the confirmation modal
+        setShowModal(true);
+    };
+
+    const handleConfirmSubmit = async () => {
+        // Close the modal
+        setShowModal(false);
+        setError(null);
 
         // Create a FormData object to handle file uploads
         const formData = new FormData();
@@ -59,24 +72,14 @@ const ProcurementApplication = () => {
             });
             if (response.status === 200) {
                 setSuccess('Application submitted successfully!');
-                let service = await response.data.data
-                console.log(service);
-                // navigate(`/applied/${id}`)
-                navigate(`/service-details/${service.postID}`, {
-                    state: {
-                        applicationID: service.applicationID,
-                        postID: service.postID,
-                        submittedDocuments: service.submittedDocuments,
-                        status: service.status,
-                        updatedAt: service.updatedAt,
-                        comments: service.comments,
-                    },
-                });
+                let serviceData = response.data.data;
+                setService(serviceData);
+                console.log(serviceData);
             }
             setLoading(false);
         } catch (error) {
             setLoading(false);
-            if (error.response.status === 409) {
+            if (error.response && error.response.status === 409) {
                 setError('You already applied for this Procurement.');
             } else {
                 console.error('Error submitting application:', error);
@@ -86,94 +89,147 @@ const ProcurementApplication = () => {
     };
 
     return (
-        <Container fluid className="procurement-application-container d-flex flex-column justify-content-center  min-vh-100">
+        <Container fluid className="procurement-application-container d-flex flex-column justify-content-center min-vh-100">
             <Card className="procurement-application-card shadow-lg">
                 <Card.Header className="text-center">
-                    <h2>Apply for Procurement</h2>
+                    <h2><FontAwesomeIcon icon={faPaperPlane} /> Apply for Procurement</h2>
                     <p><b>Procurement Ref. No.: </b>{id}</p>
-                    <p className="text-muted">Complete the form below to submit your application.</p>
+                    {!success && <p className="text-muted">Complete the form below to submit your application.</p>}
                 </Card.Header>
                 <Card.Body>
-
-                    <Form onSubmit={handleSubmit}>
-                        <FileUploadComponent
-                            label="Certificate of Incorporation (PDF)"
-                            fileType={['pdf']}
-                            maxSize={30}
-                            onFileUpload={setIncorporationCertificate}
-                        />
-
-                        <hr />
-
-                        <FileUploadComponent
-                            label="Budget (DOCX, DOC, PDF, XLSX, XLS, ODS, CSV)"
-                            fileType={['docx', 'doc', 'pdf', 'xlsx', 'xls', 'ods', 'csv']}
-                            maxSize={10}
-                            onFileUpload={setBudget}
-                        />
-
-                        <hr />
-
-                        <FileUploadComponent
-                            label="Proposal (PDF)"
-                            fileType={['pdf']}
-                            maxSize={30}
-                            onFileUpload={setOtherDocument}
-                        />
-
-                        <hr />
-
-                        <FileUploadComponent
-                            label="Batch 1 Team CV (Combined PDF - Maximum file size is 30MB)"
-                            fileType={['pdf']}
-                            maxSize={30}
-                            onFileUpload={setTeamCv}
-                        />
-
-                        <Form.Label className="mt-4">If combined CV exceeds 30MB, Split the pdf and Upload second batch below. </Form.Label>
-
-                        <FileUploadComponent
-                            label="Batch 2 Team CV (Combined PDF - Maximum file size is 30MB)"
-                            fileType={['pdf']}
-                            maxSize={30}
-                            onFileUpload={setTeamCv2}
-                        />
-
-                        <hr />
-
-                        <Form.Group className="mt-4">
-                            <Form.Check
-                                type="checkbox"
-                                label="I accept the Terms and Conditions"
-                                checked={termsAccepted}
-                                onChange={(e) => setTermsAccepted(e.target.checked)}
-                                className="terms-checkbox"
+                    {success ? (
+                        <div className="text-center">
+                            <Alert variant="success">
+                                <h4><FontAwesomeIcon icon={faCheckCircle} /> {success}</h4>
+                                <p>Your application for Procurement Ref. No. {id} has been submitted successfully.</p>
+                            </Alert>
+                            <Button
+                                variant="primary"
+                                className="m-2"
+                                onClick={() => navigate(`/service-details/${service.postID}`, {
+                                    state: {
+                                        applicationID: service.applicationID,
+                                        postID: service.postID,
+                                        submittedDocuments: service.submittedDocuments,
+                                        status: service.status,
+                                        updatedAt: service.updatedAt,
+                                        comments: service.comments,
+                                    },
+                                })}
+                            >
+                                <FontAwesomeIcon icon={faArrowRight} /> View Service Details
+                            </Button>
+                            {/* <Button
+                                variant="secondary"
+                                className="m-2"
+                                onClick={() => navigate('/dashboard')}
+                            >
+                                <FontAwesomeIcon icon={faArrowLeft} /> Go to Dashboard
+                            </Button> */}
+                        </div>
+                    ) : (
+                        <Form onSubmit={handleSubmit}>
+                            <FileUploadComponent
+                                label="Certificate of Incorporation (PDF)"
+                                fileType={['pdf']}
+                                maxSize={30}
+                                onFileUpload={setIncorporationCertificate}
                             />
-                        </Form.Group>
 
-                        <Button
-                            variant="outline-success"
-                            type="submit"
-                            className="mt-4 w-100 submit-button"
-                            disabled={loading}
-                        >
-                            {
-                                !loading ?
-                                    'Submit Application'
-                                    :
-                                    <>
-                                        <Spinner animation="grow" variant="secondary" />
-                                        <Spinner animation="grow" variant="success" />
-                                        <Spinner animation="grow" variant="danger" />
-                                    </>
-                            }
-                        </Button>
-                    </Form>
+                            <hr />
+
+                            <FileUploadComponent
+                                label="Budget (DOCX, DOC, PDF, XLSX, XLS, ODS, CSV)"
+                                fileType={['docx', 'doc', 'pdf', 'xlsx', 'xls', 'ods', 'csv']}
+                                maxSize={10}
+                                onFileUpload={setBudget}
+                            />
+
+                            <hr />
+
+                            <FileUploadComponent
+                                label="Proposal (PDF)"
+                                fileType={['pdf']}
+                                maxSize={30}
+                                onFileUpload={setOtherDocument}
+                            />
+
+                            <hr />
+
+                            <FileUploadComponent
+                                label="Batch 1 Team CV (Combined PDF - Maximum file size is 30MB)"
+                                fileType={['pdf']}
+                                maxSize={30}
+                                onFileUpload={setTeamCv}
+                            />
+
+                            <Form.Label className="mt-4">If combined CV exceeds 30MB, split the PDF and upload second batch below.</Form.Label>
+
+                            <FileUploadComponent
+                                label="Batch 2 Team CV (Combined PDF - Maximum file size is 30MB)"
+                                fileType={['pdf']}
+                                maxSize={30}
+                                onFileUpload={setTeamCv2}
+                            />
+
+                            <hr />
+
+                            <Form.Group className="mt-4">
+                                <Form.Check
+                                    type="checkbox"
+                                    label="I accept the Terms and Conditions"
+                                    checked={termsAccepted}
+                                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                                    className="terms-checkbox"
+                                />
+                            </Form.Group>
+
+                            <Button
+                                variant="outline-success"
+                                type="submit"
+                                className="mt-4 w-100 submit-button"
+                                disabled={loading}
+                            >
+                                {
+                                    !loading ?
+                                        <>
+                                            <FontAwesomeIcon icon={faPaperPlane} /> Submit Application
+                                        </>
+                                        :
+                                        <>
+                                            <Spinner animation="grow" variant="secondary" />
+                                            <Spinner animation="grow" variant="success" />
+                                            <Spinner animation="grow" variant="danger" />
+                                        </>
+                                }
+                            </Button>
+                        </Form>
+                    )}
                 </Card.Body>
 
-                {error && <Alert variant="danger">{error}</Alert>}
-                {success && <Alert variant="success">{success}</Alert>}
+                {error && <Alert variant="danger" className="m-3">
+                    <FontAwesomeIcon icon={faExclamationTriangle} /> {error}
+                </Alert>}
             </Card>
+
+            {/* Confirmation Modal */}
+            <Modal show={showModal} onHide={() => { }} backdrop="static" keyboard={false}>
+                <Modal.Header>
+                    <Modal.Title>Confirm Submission</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Once your application is submitted, no further changes or modifications can be made.</p>
+                    <p>Are you sure you want to proceed?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleConfirmSubmit}>
+                        Confirm Submission
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 };
