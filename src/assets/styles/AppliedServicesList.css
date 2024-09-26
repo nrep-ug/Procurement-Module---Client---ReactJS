@@ -1,0 +1,21 @@
+/* src/assets/styles/AppliedServicesList.css */
+.status-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: capitalize;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    color: white;
+}
+
+.status-approved {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-rejected {
+    background-color: #dc3545;
+    color: white;
+}

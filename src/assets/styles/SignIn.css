@@ -1,0 +1,63 @@
+/* src/assets/styles/SignIn.css */
+.login-container {
+    /* background: url('../images/background.svg') no-repeat center center/cover; */
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    /* General padding for all screen sizes */
+}
+
+.login-card {
+    background-color: #fdf7f1;
+    /* Light brownish background */
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    /* Restrict maximum width on larger screens */
+    width: 100%;
+    /* Ensure it takes full width on smaller screens */
+}
+
+@media (min-width: 1200px) {
+    .login-card {
+        padding: 3rem;
+        /* Increase padding on large screens */
+        max-width: 450px;
+        /* Increase max width on large screens */
+    }
+}
+
+.login-card h1 {
+    color: #5b3a29;
+    /* Dark brown color */
+}
+
+.login-card p {
+    color: #8a4b30;
+    /* Medium brown color */
+}
+
+.login-card a {
+    color: #c75600;
+    /* Dark orange color */
+}
+
+.login-card a:hover {
+    text-decoration: underline;
+}
+
+.social-icons a {
+    color: #5b3a29;
+    /* Dark brown color */
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: #c75600;
+    /* Dark orange color */
+}

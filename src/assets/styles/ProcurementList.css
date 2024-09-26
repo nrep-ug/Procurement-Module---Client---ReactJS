@@ -1,0 +1,28 @@
+/* Custom styles for the ProcurementList component */
+
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+.shadow-sm {
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+}
+
+.text-center h3 {
+    color: #555;
+    font-weight: 600;
+}
+
+.text-center p {
+    color: #777;
+    font-size: 1.1rem;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.btn-outline-primary {
+    border-radius: 50px;
+    padding: 0.5rem 1.5rem;
+}

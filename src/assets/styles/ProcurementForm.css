@@ -1,0 +1,54 @@
+/* src/assets/styles/ProcurementForm.css */
+
+.procurement-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-input,
+.custom-textarea {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 1.2 rem;
+}
+
+.custom-input:focus,
+.custom-textarea:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+}
+
+.submit-button {
+    background-color: #28a745;
+    border-color: #28a745;
+    padding: 10px 30px;
+    font-size: 16px;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.form-label .fa-icon {
+    margin-right: 8px;
+}
+
+.text-center {
+    margin-top: 20px;
+}

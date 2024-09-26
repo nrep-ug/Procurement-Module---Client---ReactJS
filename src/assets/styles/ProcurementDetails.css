@@ -1,0 +1,55 @@
+/* src/assets/styles/ProcurementDetails.css */
+
+.procurement-details-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.procurement-details-card {
+    border: none;
+}
+
+.procurement-details-header {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.procurement-details-header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.procurement-details-header p {
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.procurement-details-body {
+    padding: 20px;
+}
+
+.procurement-details-section {
+    margin-bottom: 20px;
+}
+
+.procurement-details-section h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 5px;
+}
+
+.procurement-details-section p,
+.procurement-details-section ul {
+    font-size: 1rem;
+    margin-left: 20px;
+}
+
+.procurement-details-footer {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-top: 2px solid #dee2e6;
+}
