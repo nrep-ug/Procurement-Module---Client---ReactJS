@@ -25,7 +25,7 @@ const Profile = () => {
             {userType === 'staff' ? (
                 <StaffProfile user={userInfo} />
             ) : (
-                <SupplierProfile user={userInfo} />
+                <SupplierProfile supplier={userInfo} />
             )}
         </Container>
     );

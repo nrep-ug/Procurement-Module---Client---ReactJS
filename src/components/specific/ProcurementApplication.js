@@ -117,7 +117,7 @@ const ProcurementApplication = () => {
                                     },
                                 })}
                             >
-                                <FontAwesomeIcon icon={faArrowRight} /> View Service Details
+                                <FontAwesomeIcon icon={faArrowRight} /> View Application Status
                             </Button>
                             {/* <Button
                                 variant="secondary"

@@ -19,6 +19,7 @@ import ProcurementApplication from './components/specific/ProcurementApplication
 import SupplierRegistration from './components/specific/SupplierRegistration';
 import AppliedServicesList from './components/specific/AppliedServicesList';
 import AppliedServiceDetails from './components/specific/AppliedServiceDetails.js';
+import SupplierListPage from './pages/SupplierListPage.js'
 import "./App.css";
 
 function App() {
@@ -62,7 +63,7 @@ function Content() {
           <Route path="/edit-profile/:userID" element={<PrivateRoute element={<EditProfile />} />} />
           <Route path="/applied/list" element={<PrivateRoute element={<AppliedServicesList />} />} />
           <Route path="/service-details/:serviceID" element={<PrivateRoute element={<AppliedServiceDetails />} />} />
-
+          <Route path="/suppliers-list" element={<PrivateRoute element={<SupplierListPage/>}/>}/>
         </Routes>
       </div>
     </>

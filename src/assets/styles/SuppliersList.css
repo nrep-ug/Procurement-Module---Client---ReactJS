@@ -1,0 +1,140 @@
+/* src/assets/styles/SuppliersList.css */
+
+/* General Container Styling */
+.suppliers-list-container {
+    margin-top: 20px;
+    padding: 0 15px;
+}
+
+/* Header Section */
+.suppliers-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Toggle Button Styling */
+.toggle-button-group .btn {
+    margin-left: 5px;
+}
+
+.toggle-button-group .btn.active {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+/* Table Styling */
+.table thead th {
+    background-color: #f8f9fa;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+.table tbody td.actions-column {
+    text-align: center;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Card Grid Styling */
+.supplier-card {
+    transition: transform 0.2s;
+}
+
+.supplier-card:hover {
+    transform: scale(1.02);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-text {
+    margin-bottom: 10px;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+/* Pagination Styling */
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.pagination .page-link {
+    color: #0d6efd;
+}
+
+.pagination .page-link:hover {
+    background-color: #e9ecef;
+}
+
+/* Spinner Positioning */
+.loading-spinner {
+    min-height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Error Message Styling */
+.alert {
+    margin-top: 20px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .suppliers-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .toggle-button-group {
+        margin-top: 10px;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tbody td {
+        display: block;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .table tbody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .table tbody tr {
+        margin-bottom: 15px;
+        border-bottom: 1px solid #dee2e6;
+    }
+}

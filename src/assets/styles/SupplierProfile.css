@@ -1,0 +1,51 @@
+/* src/assets/styles/SupplierProfile.css */
+
+.supplier-profile-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.supplier-profile-card {
+    border: none;
+    border-radius: 8px;
+}
+
+.supplier-profile-header {
+    background-color: #0d6efd;
+    color: white;
+    padding: 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.company-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #0d6efd;
+}
+
+.tab-content p {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.tab-content p strong {
+    color: #1b8a97;
+}
+
+@media (max-width: 767px) {
+    .supplier-profile-header h2 {
+        font-size: 24px;
+    }
+
+    .company-logo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .tab-content p {
+        font-size: 14px;
+    }
+}
