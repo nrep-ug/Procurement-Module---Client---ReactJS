@@ -20,6 +20,7 @@ import SupplierRegistration from './components/specific/SupplierRegistration';
 import AppliedServicesList from './components/specific/AppliedServicesList';
 import AppliedServiceDetails from './components/specific/AppliedServiceDetails.js';
 import SupplierListPage from './pages/SupplierListPage.js'
+import SupplierProfileDetails from './components/specific/admin/SupplierProfileDetails.js'
 import "./App.css";
 
 function App() {
@@ -61,10 +62,11 @@ function Content() {
           <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
           <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
           <Route path="/edit-profile/:userID" element={<PrivateRoute element={<EditProfile />} />} />
-          <Route path="/applied/list" element={<PrivateRoute element={<AppliedServicesList />} />} />
+          <Route path="/applied/list/:id" element={<PrivateRoute element={<AppliedServicesList />} />} />
           <Route path="/service-details/:serviceID" element={<PrivateRoute element={<AppliedServiceDetails />} />} />
           <Route path="/suppliers-list" element={<PrivateRoute element={<SupplierListPage/>}/>}/>
-        </Routes>
+          <Route path="/supplier-profile/:id" element={<PrivateRoute element={<SupplierProfileDetails/>}/>}/>
+          </Routes>
       </div>
     </>
   );

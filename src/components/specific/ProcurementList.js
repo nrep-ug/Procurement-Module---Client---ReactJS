@@ -1,6 +1,6 @@
 // src\components\specific\ProcurementList.js
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Button, Pagination, Spinner } from 'react-bootstrap';
+import { Container, Card, Button, Pagination, Spinner, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { formatDate2 } from '../../utils/formatDate.js'
 import axios from 'axios';
@@ -100,6 +100,9 @@ const ProcurementList = () => {
                                     <small>Procure ID: {procurement.procureID}</small>
                                     <br />
                                     <small>Submission Deadline: {formatDate2(procurement.submissionDeadline)}</small>
+                                    <div>
+                                    {procurement.deadlineExtension ? <Badge pill bg="warning" text='dark'>Deadline Extended: {formatDate2(procurement.extendedDeadline)}</Badge>:null}
+                                    </div>
                                 </Card.Footer>
                             </Card>
                         ))}

@@ -177,7 +177,7 @@ const SuppliersList = () => {
                 </ToggleButtonGroup>
             </div>
             {loading ? (
-                <div className="loading-spinner">
+                <div className="loading-spinner d-flex flex-column min-vh-100 mb-4 mt-2">
                     <Spinner animation="border" variant="primary" />
                 </div>
             ) : error ? (

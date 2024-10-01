@@ -10,7 +10,7 @@ import {
     Tab,
     Button,
 } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBuilding,
@@ -26,6 +26,10 @@ import {
 import '../../../assets/styles/SupplierProfile.css'; // Import custom CSS
 
 const SupplierProfile = ({ supplier }) => {
+    
+    // Retrieve user info from localStorage
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
     const navigate = useNavigate();
 
     console.log('Supplier data: ', supplier)
@@ -58,7 +62,7 @@ const SupplierProfile = ({ supplier }) => {
                             <p className="text-muted">{supplier.category.join(', ') || 'Industry'}</p>
                             <Button
                                 variant="secondary"
-                                onClick={() => navigate('/applied/list')}
+                                onClick={() => navigate(`/applied/list/${supplier.supplierID}`)}
                                 className="mt-2"
                             >
                                 <FontAwesomeIcon icon={faClipboardList} /> View Applications
@@ -148,12 +152,18 @@ const SupplierProfile = ({ supplier }) => {
                                                 <strong>Login Email:</strong> {supplier.accountEmail}
                                             </p>
                                             <hr />
+                                            {
+                                            userInfo.userType.includes('supplier') 
+                                            
+                                            && 
+                                            
                                             <Button
                                                 variant="warning"
                                                 onClick={() => navigate('/request-password-reset')}
                                             >
                                                 <FontAwesomeIcon icon={faKey} /> Change Password
                                             </Button>
+                                            }
                                         </Col>
                                     </Row>
                                 </Tab>

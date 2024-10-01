@@ -30,9 +30,14 @@ const NavigationBar = () => {
                             <FontAwesomeIcon icon={faHome} className="me-1" /> Home
                         </Nav.Link>
                         {isAuthenticated && userInfo.userType.includes('staff') && (
+                            <>
+                            <Nav.Link as={Link} to="/suppliers-list" className="nav-item">
+                                <FontAwesomeIcon icon={faFileAlt} className="me-1" /> Suppliers
+                            </Nav.Link>
                             <Nav.Link as={Link} to="/create-procurement-post" className="nav-item">
                                 <FontAwesomeIcon icon={faFileAlt} className="me-1" /> Create Post
                             </Nav.Link>
+                            </>
                         )}
                         {isAuthenticated && userInfo.userType.includes('supplier') && (
                             <Nav.Link as={Link} to="/applied/list" className="nav-item">

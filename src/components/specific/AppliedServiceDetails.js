@@ -7,7 +7,10 @@ import { faFileAlt, faCircle, faCalendarAlt, faFile } from '@fortawesome/free-so
 import { fetchServiceDetails, fetchDocumentPreview } from '../../services/api';
 import '../../assets/styles/AppliedServiceDetails.css';
 
-const AppliedServiceDetails = () => {
+const AppliedServiceDetails = () => { 
+    // Retrieve user info from localStorage
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
     const { serviceID } = useParams();
     const location = useLocation();
     const [serviceDetails, setServiceDetails] = useState(null);
@@ -127,6 +130,13 @@ const AppliedServiceDetails = () => {
                         )}
                     </ListGroup>
                 </Card.Body>
+                <Card.Footer>
+                    {userInfo.userType.includes('staff') && (
+                        //  TODO: NOT ACTIVE YET
+                        // Staff updates the status of the application by providing a status update and add comments if required
+                        <Button variant='warning'>Update Supplier Application Status</Button> 
+                    )}
+                </Card.Footer>
             </Card>
         </Container>
     );

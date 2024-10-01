@@ -1,25 +1,32 @@
 // src/components/specific/AppliedServicesList.js
 import React, { useEffect, useState } from 'react';
 import { ListGroup, Container, Card, Spinner, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getAppliedToServices } from '../../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt, faCircle } from '@fortawesome/free-solid-svg-icons';
 import '../../assets/styles/AppliedServicesList.css';
 
 const AppliedServicesList = () => {
+    const {id} = useParams()
     const [appliedServices, setAppliedServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     // Fetch the supplier ID from local storage safely
-    const supplierInfo = JSON.parse(localStorage.getItem('userInfo'));
-    const supplierID = supplierInfo ? supplierInfo.supplierID : null;
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const supplierID = id;
+
+    if(userInfo.userType.includes('staff')){}
+    else if(userInfo.supplierID===id){}
+    else{
+        navigate('/')
+    }
 
     useEffect(() => {
-        if (!supplierID) {
-            setError('No supplier ID found. Please log in.');
+        if (supplierID===null || supplierID===undefined) {
+            setError('Invalid Supplier ID');
             setLoading(false);
             return;
         }
@@ -57,7 +64,7 @@ const AppliedServicesList = () => {
 
     if (loading) {
         return (
-            <Container className="mt-4 text-center">
+            <Container className="d-flex flex-column min-vh-100 mb-4 mt-2">
                 <Spinner animation="border" variant="primary" />
             </Container>
         );
@@ -65,7 +72,7 @@ const AppliedServicesList = () => {
 
     if (error) {
         return (
-            <Container className="mt-4">
+            <Container className="d-flex flex-column min-vh-100 mb-4 mt-2">
                 <Alert variant="danger">{error}</Alert>
             </Container>
         );
@@ -100,7 +107,7 @@ const AppliedServicesList = () => {
                         ))
                     ) : (
                         <ListGroup.Item className="text-center">
-                            No applied services found.
+                            Not yet applied to any procurement. All your applications will appear here.
                         </ListGroup.Item>
                     )}
                 </ListGroup>

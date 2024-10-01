@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Button, Spinner } from 'react-bootstrap';
+import { Container, Card, Button, Spinner, Badge } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { formatDate2 } from '../../utils/formatDate.js'
 import axios from 'axios';
@@ -11,6 +11,9 @@ const ProcurementDetails = () => {
     const [procurement, setProcurement] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    // Retrieve user info from localStorage
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
     useEffect(() => {
         const fetchProcurementDetails = async () => {
@@ -80,8 +83,17 @@ const ProcurementDetails = () => {
                         <p>
                             <strong>Submission Deadline:</strong> {formatDate2(procurement.submissionDeadline)}
                         </p>
-                        {/* <p><strong>Contract Award Date:</strong> {new Date(procurement.contractAwardDate).toLocaleDateString()}</p>
-                        <p><strong>Questions Deadline:</strong> {new Date(procurement.questionsDeadline).toLocaleDateString()}</p> */}
+                        {procurement.deadlineExtension ?
+                            <p>
+                                <Badge pill bg="warning" text='dark'><strong>Deadline Extended:</strong> {formatDate2(procurement.extendedDeadline)}</Badge>
+                            </p>
+                            : null
+                        }
+
+                        {
+                            /* <p><strong>Contract Award Date:</strong> {new Date(procurement.contractAwardDate).toLocaleDateString()}</p>
+                            <p><strong>Questions Deadline:</strong> {new Date(procurement.questionsDeadline).toLocaleDateString()}</p> */
+                        }
                     </section>
                 </Card.Header>
                 <Card.Body className="procurement-details-body">
@@ -151,13 +163,18 @@ const ProcurementDetails = () => {
                     </section>
                 </Card.Body>
                 <Card.Footer className="procurement-details-footer text-center">
-                    <Button
-                        variant="primary"
-                        size="lg"
-                        onClick={() => navigate(`/apply-procurement/${procurement.procureID}`)}
-                    >
-                        Apply for Procurement
-                    </Button>
+                    {
+                        userInfo.userType.includes('supplier')
+                        &&
+
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            onClick={() => navigate(`/apply-procurement/${procurement.procureID}`)}
+                        >
+                            Apply for Procurement
+                        </Button>
+                    }
                 </Card.Footer>
             </Card>
         </Container>
