@@ -40,7 +40,7 @@ const NavigationBar = () => {
                             </>
                         )}
                         {isAuthenticated && userInfo.userType.includes('supplier') && (
-                            <Nav.Link as={Link} to="/applied/list" className="nav-item">
+                            <Nav.Link as={Link} to={`/applied/list/${userInfo.supplierID}` }className="nav-item">
                                 <FontAwesomeIcon icon={faClipboardList} className="me-1" /> Applied
                             </Nav.Link>
                         )}
