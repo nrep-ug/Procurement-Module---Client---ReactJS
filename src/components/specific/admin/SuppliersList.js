@@ -13,6 +13,7 @@ import {
     Table,
     ToggleButtonGroup,
     ToggleButton,
+    Badge 
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { formatDate2 } from '../../../utils/formatDate.js';
@@ -61,6 +62,8 @@ const SuppliersList = () => {
                 }
             );
             const data = response.data;
+
+            console.log(data.documents)
 
             setSuppliers(data.documents);
             setTotalDocuments(data.totalDocuments);
@@ -199,6 +202,7 @@ const SuppliersList = () => {
                                         <th>Location</th>
                                         <th>Categories</th>
                                         <th>Created On</th>
+                                        <th className="actions-column">Number of Applications</th>
                                         <th className="actions-column">Actions</th>
                                     </tr>
                                 </thead>
@@ -211,6 +215,24 @@ const SuppliersList = () => {
                                             </td>
                                             <td data-label="Categories">{supplier.category.join(', ')}</td>
                                             <td data-label="Created On">{formatDate2(supplier.createdAt)}</td>
+                                            <td data-label="Actions" className="actions-column">
+                                                <Button
+                                                    variant="warning"
+                                                    size="sm"
+                                                    onClick={() => navigate(`/applied/list/${supplier.supplierID}`)}
+                                                    disabled={supplier.applications===0}
+
+                                                >
+                                                    <Badge bg="secondary" >{supplier.applications}</Badge> Applications
+                                                    {
+                                                    supplier.applications> 0 && 
+                                                    <>
+                                                    <hr/>
+                                                    View
+                                                    </>
+                                                    }
+                                                </Button>
+                                            </td>
                                             <td data-label="Actions" className="actions-column">
                                                 <Button
                                                     variant="primary"
