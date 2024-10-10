@@ -1,0 +1,37 @@
+/* AppliedServiceDetails.css */
+
+.applied-service-details-container {
+    min-height: 80vh;
+  }
+  
+  .status-badge {
+    font-size: 1em;
+    padding: 0.5em 1em;
+  }
+  
+  .documents-card,
+  .comments-card {
+    margin-top: 1em;
+  }
+  
+  .documents-card .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .documents-card .btn {
+    min-width: 100px;
+  }
+  
+  @media (max-width: 767px) {
+    .applied-service-details-container .row {
+      flex-direction: column;
+    }
+  
+    .documents-card,
+    .comments-card {
+      margin-top: 1em;
+    }
+  }
+  

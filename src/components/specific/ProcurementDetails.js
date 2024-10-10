@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Button, Spinner, Badge } from 'react-bootstrap';
+import { Container, Card, ButtonGroup, Button, Spinner, Badge } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
-import { formatDate2 } from '../../utils/formatDate.js'
+import { formatDate2 } from '../../utils/formatDate.js';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext.js';
 import { fetchDocumentPreview } from '../../services/api';
 import { serverURL } from '../../configs/urls.js';
 import '../../assets/styles/ProcurementDetails.css';
+
 const ProcurementDetails = () => {
     const { id } = useParams();
+    const { isAuthenticated } = useAuth();
+
+    const [userInfo, setUserInfo] = useState([]);
     const [procurement, setProcurement] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Retrieve user info from localStorage
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    // Retrieve user info from localStorage when isAuthenticated changes
+    useEffect(() => {
+        if (isAuthenticated) {
+            const storedUserInfo = JSON.parse(localStorage.getItem('userInfo'));
+            setUserInfo(storedUserInfo);
+        }
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const fetchProcurementDetails = async () => {
@@ -164,16 +174,55 @@ const ProcurementDetails = () => {
                 </Card.Body>
                 <Card.Footer className="procurement-details-footer text-center">
                     {
-                        userInfo.userType.includes('supplier')
-                        &&
+                        isAuthenticated ?
+                            <>
 
-                        <Button
-                            variant="primary"
-                            size="lg"
-                            onClick={() => navigate(`/apply-procurement/${procurement.procureID}`)}
-                        >
-                            Apply for Procurement
-                        </Button>
+                                {
+                                    userInfo.userType.includes('supplier')
+                                        ?
+                                        <Button
+                                            variant="primary"
+                                            size="lg"
+                                            onClick={() => navigate(`/apply-procurement/${procurement.procureID}`)}
+                                        >
+                                            Apply for Procurement
+                                        </Button>
+                                        :
+                                        userInfo.userType.includes('staff')
+                                            ?
+                                            <Button
+                                                variant="warning"
+                                                size="lg"
+                                                onClick={() => navigate(`/edit-procurement/${procurement.procureID}`)} // TODO: The editting component to be implemented
+                                            >
+                                                Edit Procurement Post
+                                            </Button>
+                                            :
+                                            null
+                                }
+                            </>
+                             :
+                            <>
+                                <div>Sign in or create an account before you can appply to provide this service</div>
+                                <ButtonGroup>
+
+                                    <Button
+                                        variant="outline-success"
+                                        size="lg"
+                                        onClick={() => navigate(`/sign-in`)}
+                                    >
+                                        Sign in into your account
+                                    </Button>
+
+                                    <Button
+                                        variant="outline-info"
+                                        size="lg"
+                                        onClick={() => navigate(`/sign-up`)}
+                                    >
+                                        Create an account
+                                    </Button>
+                                </ButtonGroup>
+                            </>
                     }
                 </Card.Footer>
             </Card>

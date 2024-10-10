@@ -1,28 +1,79 @@
+/* src/assets/styles/ProcurementList.css */
+
 /* Custom styles for the ProcurementList component */
 
-.min-vh-100 {
-    min-height: 100vh;
+.procurement-list-container {
+    background-color: #f8f9fa;
+    padding-bottom: 50px;
 }
 
-.shadow-sm {
-    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
-}
-
-.text-center h3 {
-    color: #555;
+.no-procurement-title {
+    color: #343a40;
     font-weight: 600;
 }
 
-.text-center p {
-    color: #777;
-    font-size: 1.1rem;
-}
-
-.pagination {
-    margin-top: 20px;
-}
-
-.btn-outline-primary {
-    border-radius: 50px;
+.custom-button {
+    border-radius: 30px;
     padding: 0.5rem 1.5rem;
+    font-weight: 500;
 }
+
+.custom-button:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.procurement-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+}
+
+.procurement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.procurement-card .card-title {
+    font-size: 1.25rem;
+    color: #007bff;
+    font-weight: 600;
+}
+
+.procurement-card .card-text {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.status-badge {
+    font-size: 0.85rem;
+}
+
+.dropdown-item-custom {
+    padding: 0.25rem 1.5rem;
+}
+
+.dropdown-item-custom .form-check-label {
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.pagination .page-item .page-link {
+    color: #007bff;
+}
+
+.pagination .page-item.active .page-link {
+    color: #ffff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+@media (max-width: 576px) {
+    .procurement-card .card-title {
+        font-size: 1.1rem;
+    }
+
+    .procurement-card .card-text {
+        font-size: 0.95rem;
+    }
+}
+

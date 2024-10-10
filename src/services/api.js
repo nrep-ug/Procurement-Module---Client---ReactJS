@@ -1,6 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 import { serverURL } from '../configs/urls.js';
+import qs from 'qs';
 
 // USER/STAFF APIs
 export const fetchUsers = async () => {
@@ -51,7 +52,6 @@ export const getAppliedToServices = async (supplierID) => {
 };
 
 // Applied to service details
-// src/services/api.js
 export const fetchServiceDetails = async (serviceID, supplierID) => {
     try {
         const response = await fetch(`${serverURL}/api/procure/applied/service-details?supplierID=${supplierID}&serviceID=${serviceID}`);
@@ -127,7 +127,26 @@ export const fetchDocumentPreview = async (documentId) => {
     }
 };
 
-
+// Return all the posted procurement opportunities
+export const allProcurementOpportunities = async (page, statuses) => {
+    try {
+        console.log(statuses)
+        const response = await axios.get(`${serverURL}/api/procure/services/pages/status`, {
+            params: {
+                page,
+                statuses, // Pass the statuses array directly
+            },
+            paramsSerializer: params => {
+                return qs.stringify(params, { arrayFormat: 'repeat' });
+            },
+        });
+        const data = response.data;
+        return data;
+    } catch (error) {
+        console.error('Error fetching procurement posts:', error);
+        return [];
+    }
+};
 
 
 // PROJECT APIs
