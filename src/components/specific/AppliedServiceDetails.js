@@ -12,8 +12,9 @@ import {
   faCommentDots,
   faDownload,
 } from '@fortawesome/free-solid-svg-icons';
-import { fetchServiceDetails } from '../../services/api';
+import { fetchServiceDetails, handleUpdateStatusAppliedService } from '../../services/api';
 import { appwriteEndpoint, appwriteProjectID } from '../../configs/urls.js';
+import UpdateStatusModal from './applications/UpdateStatusModal';
 import '../../assets/styles/AppliedServiceDetails.css';
 
 const AppliedServiceDetails = () => {
@@ -22,6 +23,8 @@ const AppliedServiceDetails = () => {
 
   const { serviceID } = useParams();
   const location = useLocation();
+
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [serviceDetails, setServiceDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -45,6 +48,26 @@ const AppliedServiceDetails = () => {
       fetchDetails();
     }
   }, [location.state, serviceID]);
+
+  const handleUpdateStatus = async (updateData) => {
+    try {
+      const response = await handleUpdateStatusAppliedService(updateData, serviceDetails);
+  
+      setServiceDetails((prevDetails) => ({
+        ...prevDetails,
+        status: updateData.status,
+        comments: updateData.comments,
+        updatedAt: new Date().toISOString(),
+      }));
+  
+      // Optionally, display a success message
+      alert('Application status updated successfully.');
+      setShowUpdateModal(false);
+    } catch (error) {
+      console.error('Error updating application status:', error);
+      alert('Failed to update application status. Please try again.');
+    }
+  };  
 
   const parseDocuments = (documents) => {
     try {
@@ -177,10 +200,19 @@ const AppliedServiceDetails = () => {
         </Card.Body>
         {userInfo.userType.includes('staff') && (
           <Card.Footer className="text-end">
-            <Button variant="warning">Update Supplier Application Status</Button>
+            <Button variant="warning" onClick={() => setShowUpdateModal(true)}>
+              Update Supplier Application Status
+            </Button>
           </Card.Footer>
         )}
       </Card>
+      {/* Include the modal component */}
+      <UpdateStatusModal
+        show={showUpdateModal}
+        onHide={() => setShowUpdateModal(false)}
+        onUpdate={handleUpdateStatus}
+        currentStatus={serviceDetails.status}
+      />
     </Container>
   );
 };

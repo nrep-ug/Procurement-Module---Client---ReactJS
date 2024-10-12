@@ -3,6 +3,9 @@ import axios from 'axios';
 import { serverURL } from '../configs/urls.js';
 import qs from 'qs';
 
+// Retrieve user info from localStorage
+const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
 // USER/STAFF APIs
 export const fetchUsers = async () => {
     try {
@@ -66,6 +69,20 @@ export const fetchServiceDetails = async (serviceID, supplierID) => {
     }
 };
 
+// Update Status for applied to service
+// In api.js
+export const handleUpdateStatusAppliedService = async (updateData, serviceDetails) => {
+    try {
+        console.log('Data to update: ',updateData)
+        const response = await axios.put(
+            `${serverURL}/api/procure/applied/${serviceDetails.applicationID}/status-update`,
+            updateData
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
 // category api
 export const fetchCategories = async () => {
