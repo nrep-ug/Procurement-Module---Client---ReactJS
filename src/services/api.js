@@ -165,6 +165,15 @@ export const allProcurementOpportunities = async (page, statuses) => {
     }
 };
 
+// Contact Us
+export const contactUs = async (formData) => {
+    try{
+        const response = await axios.post(`${serverURL}/api/contact`, formData);
+        return response
+    }catch(e){
+        throw new Error('Failed to send message: ', e)
+    }
+}
 
 // PROJECT APIs
 

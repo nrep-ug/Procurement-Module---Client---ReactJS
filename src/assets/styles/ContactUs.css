@@ -1,0 +1,42 @@
+/* src/assets/styles/ContactUs.css */
+
+.contact-us-container {
+    min-height: 80vh;
+  }
+  
+  .contact-us-container h3 {
+    margin: 0;
+  }
+  
+  .contact-us-container .card-header,
+  .contact-us-container .card-footer {
+    padding: 1.5rem;
+  }
+  
+  .contact-us-container .card-body {
+    padding: 2rem;
+  }
+  
+  .contact-us-container .form-label {
+    font-weight: 600;
+  }
+  
+  .contact-us-container .btn {
+    min-width: 150px;
+  }
+  
+  .contact-us-container .card-footer h5 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .contact-us-container .card-footer p {
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-us-container .btn-primary:hover {
+    background-color: #004080;
+    transition: background-color 0.3s ease;
+  }
+  
+  

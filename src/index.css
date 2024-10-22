@@ -1,4 +1,4 @@
-body {
+/* body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -10,4 +10,54 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+} */
+
+/* src/index.css or global CSS file */
+
+/* Default Theme (Light) */
+:root {
+  --primary-color: #0d6efd;
+  --background-color: #ffffff;
+  --text-color: #212529;
+  --navbar-bg-color: #ffffff;
+  --navbar-text-color: #212529;
+  /* ... other variables ... */
+}
+
+/* Dark Theme */
+[data-theme='dark'] {
+  --primary-color: #0d6efd;
+  --background-color: #121212;
+  --text-color: #ffffff;
+  --navbar-bg-color: #343a40;
+  --navbar-text-color: #ffffff;
+  /* ... other variables ... */
+}
+
+/* Apply Variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.navbar {
+  background-color: var(--navbar-bg-color) !important;
+}
+
+.navbar .nav-link {
+  color: var(--navbar-text-color) !important;
+}
+
+.navbar .nav-link.active {
+  border-bottom-color: var(--primary-color);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }

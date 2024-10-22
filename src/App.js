@@ -9,6 +9,7 @@ import RequestPasswordReset from './components/specific/auth/RequestPasswordRese
 import OTPValidation from './components/specific/auth/OTPValidation.js';
 import SetNewPassword from './components/specific/auth/SetNewPassword.js';
 import Home from './pages/Home.js';
+import ContactUs from "./components/specific/ContactUs.js";
 import Dashboard from './pages/Dashboard.js';
 import Profile from './pages/Profile.js';
 import EditProfile from './pages/EditProfile.js';
@@ -46,6 +47,7 @@ function Content() {
       <div>
         <Routes>
           {/* General routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/request-password-reset" element={<RequestPasswordReset />} />
@@ -54,7 +56,7 @@ function Content() {
           <Route path="/list" element={<AllServices />} />
           <Route path="/procure-detail/:id" element={<ProcurementDetails />} />
           <Route path="/supplier-registration" element={<SupplierRegistration />} />
-          <Route path="/" element={<Home />} />
+          <Route path="/contact-us" element={<ContactUs/>}/>
 
           {/* Protected routes */}
           <Route path="/apply-procurement/:id" element={<PrivateRoute element={<ProcurementApplication />} />} />
