@@ -6,16 +6,31 @@
 }
 
 .status-pending {
-    background-color: #ffc107;
+    background-color: #ffc107; /* Amber */
+    color: white;
+}
+
+.status-under_review {
+    background-color: #17a2b8; /* Teal */
+    color: white;
+}
+
+.status-on_hold {
+    background-color: #6c757d; /* Gray */
+    color: white;
+}
+
+.status-needs_more_info {
+    background-color: #fd7e14; /* Orange */
     color: white;
 }
 
 .status-approved {
-    background-color: #28a745;
+    background-color: #28a745; /* Green */
     color: white;
 }
 
 .status-rejected {
-    background-color: #dc3545;
+    background-color: #dc3545; /* Red */
     color: white;
 }

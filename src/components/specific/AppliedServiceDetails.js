@@ -12,6 +12,7 @@ import {
   faCommentDots,
   faDownload,
 } from '@fortawesome/free-solid-svg-icons';
+import {applicationStatus} from '../../utils/utils.js'
 import { fetchServiceDetails, handleUpdateStatusAppliedService } from '../../services/api';
 import { appwriteEndpoint, appwriteProjectID } from '../../configs/urls.js';
 import UpdateStatusModal from './applications/UpdateStatusModal';
@@ -151,11 +152,17 @@ const AppliedServiceDetails = () => {
                   <strong>Last Updated:</strong> {formatDate(serviceDetails.updatedAt)}
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  <FontAwesomeIcon icon={faCircle} className="me-2 text-primary" />
-                  <strong>Status:</strong>{' '}
-                  <Badge bg={getStatusVariant(serviceDetails.status)} className="status-badge">
+                  <FontAwesomeIcon icon={faCircle} className={`me-2 text-${serviceDetails.status.toLowerCase()}`} />
+                  {/* <strong>Status:</strong>{' '} */}
+                  {/* <Badge bg={getStatusVariant(serviceDetails.status)} className="status-badge">
                     {serviceDetails.status.charAt(0).toUpperCase() + serviceDetails.status.slice(1)}
-                  </Badge>
+                  </Badge> */}
+
+                  <span>
+                  <div className={`status-badge status-${serviceDetails.status.toLowerCase()}`}>
+                    <strong>Status: </strong> {applicationStatus(serviceDetails.status)}
+                  </div>
+                  </span>
                 </ListGroup.Item>
               </ListGroup>
             </Col>
@@ -191,7 +198,7 @@ const AppliedServiceDetails = () => {
                     Comments
                   </Card.Header>
                   <Card.Body>
-                    <p>{serviceDetails.comments}</p>
+                  <p dangerouslySetInnerHTML={{ __html: serviceDetails.comments }} />
                   </Card.Body>
                 </Card>
               </Col>

@@ -6,3 +6,18 @@ export const AlertMessage = ({ message, state }) => {
         <Alert variant={state}>{message}</Alert>
     );
 }
+
+// Application status return
+export const applicationStatus = (status) => {
+    const statusMap = {
+        pending: 'Pending',
+        approved: 'Approved',
+        rejected: 'Rejected',
+        under_review: 'Under Review',
+        on_hold: 'On Hold',
+        needs_more_info: 'More Information Needed'
+    };
+    
+    return statusMap[status] || null;
+};
+

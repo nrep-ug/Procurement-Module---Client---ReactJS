@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { ListGroup, Container, Card, Spinner, Alert } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
+import {applicationStatus} from '../../utils/utils.js'
 import { getAppliedToServices } from '../../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt, faCircle } from '@fortawesome/free-solid-svg-icons';
@@ -101,7 +102,7 @@ const AppliedServicesList = () => {
                                     <strong>Post ID:</strong> {service.postID}
                                 </div>
                                 <div className={`status-badge status-${service.status.toLowerCase()}`}>
-                                    <strong>Status:</strong> {service.status}
+                                    <strong>Status:</strong> {applicationStatus(service.status)}
                                 </div>
                             </ListGroup.Item>
                         ))

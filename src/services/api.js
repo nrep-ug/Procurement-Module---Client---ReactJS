@@ -46,7 +46,7 @@ export const getAppliedToServices = async (supplierID) => {
     try {
         const response = await fetch(`${serverURL}/api/procure/applied?supplierID=${supplierID}`);
         const data = await response.json()
-        console.log('Categories: ', data);
+        // console.log('Categories: ', data);
         return await data;
     } catch (error) {
         console.error('Error fetching procurement categories:', error);
@@ -147,7 +147,7 @@ export const fetchDocumentPreview = async (documentId) => {
 // Return all the posted procurement opportunities
 export const allProcurementOpportunities = async (page, statuses) => {
     try {
-        console.log(statuses)
+        // console.log(statuses)
         const response = await axios.get(`${serverURL}/api/procure/services/pages/status`, {
             params: {
                 page,
